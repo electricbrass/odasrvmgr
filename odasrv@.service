@@ -8,6 +8,9 @@ User=mia
 Environment="DOOMWADPATH=/home/mia/Games/Doom/WADs/IWAD/v1.9:/home/mia/Games/Doom/WADs/IWAD/d-dii:/home/mia/Games/Doom/WADs/IWAD/other:/home/mia/Games/Doom/WADs/PWAD"
 EnvironmentFile=/home/mia/Games/Doom/Odamex/ports.env
 ExecStart=/usr/bin/tmux new-session -s odasrv-%i -d \
-"/usr/local/bin/odasrv -port $%i_PORT -config /home/mia/Games/Doom/Odamex/odasrv_cfgs/base-%i.cfg +logfile /home/mia/Games/Doom/Odamex/logs/odasrv-%i.log"
+  "/usr/local/bin/odasrv \
+     -port $%i_PORT \
+     -config /home/mia/Games/Doom/Odamex/odasrv_cfgs/base-%i.cfg \
+     +logfile /home/mia/Games/Doom/Odamex/logs/odasrv-%i.log"
 ExecStop=/usr/bin/tmux kill-session -t odasrv-%i
 Restart=on-failure
