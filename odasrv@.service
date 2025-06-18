@@ -13,4 +13,5 @@ ExecStart=/usr/bin/tmux new-session -s odasrv-%i -d \
      -config /home/mia/Games/Doom/Odamex/odasrv_cfgs/base-%i.cfg \
      +logfile /home/mia/Games/Doom/Odamex/logs/odasrv-%i.log"
 ExecStop=/usr/bin/tmux kill-session -t odasrv-%i
+ExecReload=/usr/bin/tmux send-keys -t odasrv-%i "exec /home/mia/Games/Doom/Odamex/odasrv_cfgs/base-%i.cfg" ENTER
 Restart=on-failure
