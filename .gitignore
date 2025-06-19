@@ -1,0 +1,11 @@
+DoomTools/
+downloads/
+wads/PWAD/*.wad
+!wads/PWAD/nerve.wad
+!wads/PWAD/masterlevels.wad
+!wads/PWAD/sigil.wad
+!wads/PWAD/sigil2.wad
+!wads/PWAD/id1.wad
+!wads/PWAD/iddm1.wad
+!wads/PWAD/id24res.wad
+!wads/PWAD/odahorde_230421.wad

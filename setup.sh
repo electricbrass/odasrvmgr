@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 if [[ "$EUID" -ne 0 ]]; then
   echo "Error: This script must be run with sudo." >&2
@@ -13,6 +14,7 @@ fi
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 install_dir="/opt/odasrv"
 doomtools_dir="$script_dir/DoomTools"
+downloads_dir="$script_dir/downloads"
 
 admin_user="$SUDO_USER"
 service_user="odasrv"
@@ -34,6 +36,12 @@ rm 'doomtools.tar.gz'
 
 # Download wads with DoomTools
 echo "Downloading wads..."
+mkdir -p "$downloads_dir"
+"$doomtools_dir/doomfetch" --target "$downloads_dir" --lockfile "$script_dir/doomfetch.lock"
+for zip_file in "$downloads_dir"/*.zip; do
+  echo "Extracting $zip_file"
+  unzip -j -o "$zip_file" '*.wad' -d "$script_dir/wads/PWAD"
+done
 
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
