@@ -25,10 +25,10 @@ banlist_src="$script_dir/banlist.json"
 ports_src="$script_dir/ports.env"
 wads_src="$script_dir/wads"
 
-# Install tmux, java, and DoomTools
+# Install java and DoomTools
 echo "Installing dependencies..."
 apt-get update -qq
-apt-get install -y tmux default-jre
+apt-get install -y default-jre
 curl -L -o 'doomtools.tar.gz' 'https://github.com/MTrop/DoomTools/releases/download/2025.05.10-RELEASE/doomtools-bash-2025.05.10.194013274.tar.gz'
 mkdir -p "$doomtools_dir"
 tar -xzf 'doomtools.tar.gz' -C "$doomtools_dir"
@@ -46,7 +46,7 @@ done
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
   echo "Creating user $service_user..."
-  useradd --system --no-create-home --shell /usr/sbin/nologin "$service_user"
+  useradd --system -m --shell /usr/sbin/nologin "$service_user"
 else
   echo "User $service_user already exists."
 fi
@@ -66,7 +66,7 @@ usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
 echo "Setting up $install_dir and subdirectories..."
-mkdir -p "$install_dir/configs" "$install_dir/logs" "$install_dir/wads" "$install_dir/crash-dumps"
+mkdir -p "$install_dir/configs" "$install_dir/logs" "$install_dir/wads" "$install_dir/crash-dumps" "$install_dir/con"
 
 # Copy files
 echo "Copying configs, wads, banlist, and ports.env..."
@@ -84,6 +84,7 @@ find "$install_dir" -type d -exec chmod 750 {} +
 find "$install_dir" -type f -exec chmod 640 {} +
 # Except the log directory needs to be writable
 chmod 770 "$install_dir/logs"
+chmod 770 "$install_dir/con"
 # As does the banlist
 chmod 660 "$install_dir/banlist.json"
 # And the crash dumps directory

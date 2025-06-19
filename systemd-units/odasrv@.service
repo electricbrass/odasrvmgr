@@ -3,19 +3,18 @@ Description=Odamex server running the base-%i.cfg config
 PartOf=odasrv.target
 
 [Service]
-Type=forking
 # need to get this to use the odasrv user but tmux complicates that
-User=mia
+User=odasrv
 Environment="DOOMWADPATH=/opt/odasrv/wads/IWAD/v1.9:/opt/odasrv/wads/IWAD/d-dii:/opt/odasrv/wads/IWAD/other:/opt/odasrv/wads/PWAD"
 EnvironmentFile=/opt/odasrv/ports.env
-ExecStart=/usr/bin/tmux new-session -s odasrv-%i -d \
-  "/usr/local/bin/odasrv \
-    -port $%i_PORT \
-    -config /opt/odasrv/configs/base/base-%i.cfg \
-    +logfile /opt/odasrv/logs/odasrv-%i.log \
-    -crashdir /opt/odasrv/crash-dumps"
-ExecStop=/usr/bin/tmux kill-session -t odasrv-%i
-ExecReload=/usr/bin/tmux send-keys -t odasrv-%i "exec /opt/odasrv/configs/base/base-%i.cfg" ENTER
+ExecStartPre=install -m 660 /dev/null '/opt/odasrv/con/%i'
+ExecStart=/usr/local/bin/odasrv \
+  -port $%i_PORT \
+  -config /opt/odasrv/configs/base/base-%i.cfg \
+  +logfile /opt/odasrv/logs/odasrv-%i.log \
+  -confile /opt/odasrv/con/%i \
+  -crashdir /opt/odasrv/crash-dumps
+ExecReload=/bin/bash -c "echo 'exec /opt/odasrv/configs/base/base-%i.cfg' >> /opt/odasrv/con/%i"
 Restart=on-failure
 
 # security hardening
