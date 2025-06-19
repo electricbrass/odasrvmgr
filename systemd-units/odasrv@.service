@@ -3,7 +3,6 @@ Description=Odamex server running the base-%i.cfg config
 PartOf=odasrv.target
 
 [Service]
-# need to get this to use the odasrv user but tmux complicates that
 User=odasrv
 Environment="DOOMWADPATH=/opt/odasrv/wads/IWAD/v1.9:/opt/odasrv/wads/IWAD/d-dii:/opt/odasrv/wads/IWAD/other:/opt/odasrv/wads/PWAD"
 EnvironmentFile=/opt/odasrv/ports.env
@@ -11,13 +10,13 @@ ExecStartPre=install -m 660 /dev/null '/opt/odasrv/con/%i'
 ExecStart=/usr/local/bin/odasrv \
   -port $%i_PORT \
   -config /opt/odasrv/configs/base/base-%i.cfg \
-  +logfile /opt/odasrv/logs/odasrv-%i.log \
+  +logfile /opt/odasrv/logs/%i.log \
   -confile /opt/odasrv/con/%i \
   -crashdir /opt/odasrv/crash-dumps
 ExecReload=/bin/bash -c "echo 'exec /opt/odasrv/configs/base/base-%i.cfg' >> /opt/odasrv/con/%i"
-Restart=on-failure
+Restart=always
 
 # security hardening
 NoNewPrivilegs=yes
 MemoryDenyWriteExecute=yes
-# would love to do things like protecthome and protectsystem but tmux needs access
+# would love to do things like protecthome and protectsystem but it looks like odasrv needs a home directory
