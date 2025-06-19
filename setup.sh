@@ -39,7 +39,7 @@ else
 fi
 
 # Add users to group
-echo "Adding $serivce_user and $admin_user to $service_group..."
+echo "Adding $service_user and $admin_user to $service_group..."
 usermod -aG "$service_group" "$service_user"
 usermod -aG "$service_group" "$admin_user"
 
