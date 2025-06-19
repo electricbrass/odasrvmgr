@@ -12,6 +12,7 @@ fi
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 install_dir="/opt/odasrv"
+doomtools_dir="$script_dir/DoomTools"
 
 admin_user="$SUDO_USER"
 service_user="odasrv"
@@ -22,9 +23,17 @@ banlist_src="$script_dir/banlist.json"
 ports_src="$script_dir/ports.env"
 wads_src="$script_dir/wads"
 
-# Install tmux
+# Install tmux, java, and DoomTools
+echo "Installing dependencies..."
 apt-get update -qq
 apt-get install -y tmux default-jre
+curl -L -o 'doomtools.tar.gz' 'https://github.com/MTrop/DoomTools/releases/download/2025.05.10-RELEASE/doomtools-bash-2025.05.10.194013274.tar.gz'
+mkdir -p "$doomtools_dir"
+tar -xzf 'doomtools.tar.gz' -C "$doomtools_dir"
+rm 'doomtools.tar.gz'
+
+# Download wads with DoomTools
+echo "Downloading wads..."
 
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
