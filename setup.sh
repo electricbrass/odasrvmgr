@@ -24,7 +24,7 @@ wads_src="$script_dir/wads"
 
 # Install tmux
 apt-get update -qq
-apt-get install -y tmux
+apt-get install -y tmux default-jre
 
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
