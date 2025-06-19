@@ -4,6 +4,7 @@ PartOf=odasrv.target
 
 [Service]
 Type=forking
+# need to get this to use the odasrv user but tmux complicates that
 User=mia
 Environment="DOOMWADPATH=/opt/odasrv/wads/IWAD/v1.9:/opt/odasrv/wads/IWAD/d-dii:/opt/odasrv/wads/IWAD/other:/opt/odasrv/wads/PWAD"
 EnvironmentFile=/opt/odasrv/ports.env
@@ -16,3 +17,8 @@ ExecStart=/usr/bin/tmux new-session -s odasrv-%i -d \
 ExecStop=/usr/bin/tmux kill-session -t odasrv-%i
 ExecReload=/usr/bin/tmux send-keys -t odasrv-%i "exec /opt/odasrv/configs/base/base-%i.cfg" ENTER
 Restart=on-failure
+
+# security hardening
+NoNewPrivilegs=yes
+MemoryDenyWriteExecute=yes
+# would love to do things like protecthome and protectsystem but tmux needs access
