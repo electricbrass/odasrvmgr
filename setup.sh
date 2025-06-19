@@ -95,3 +95,8 @@ find "$install_dir" -type d -exec chmod g+s {} +
 echo "Enabling servers..."
 systemctl link "$script_dir/systemd-units/odasrv@.service"
 systemctl enable --now "$script_dir/systemd-units/odasrv.target"
+
+# Install manager script
+echo "Installing odasrvmgr..."
+echo "$script_dir" > /opt/odasrv/.repo_path
+install -m 755 "$script_dir/odasrvmgr.sh"  /usr/local/bin/odasrvmgr
