@@ -1,0 +1,17 @@
+[Unit]
+Description=Odamex server running the base-%i.cfg config
+PartOf=odasrv.target
+
+[Service]
+Type=forking
+User=mia
+Environment="DOOMWADPATH=/opt/odasrv/wads/IWAD/v1.9:/opt/odasrv/wads/IWAD/d-dii:/opt/odasrv/wads/IWAD/other:/opt/odasrv/wads/PWAD"
+EnvironmentFile=/opt/odasrv/ports.env
+ExecStart=/usr/bin/tmux new-session -s odasrv-%i -d \
+  "/usr/local/bin/odasrv \
+     -port $%i_PORT \
+     -config /opt/odasrv/configs/base-%i.cfg \
+     +logfile /opt/odasrv/logs/odasrv-%i.log"
+ExecStop=/usr/bin/tmux kill-session -t odasrv-%i
+ExecReload=/usr/bin/tmux send-keys -t odasrv-%i "exec /opt/odasrv/configs/base/base-%i.cfg" ENTER
+Restart=on-failure
