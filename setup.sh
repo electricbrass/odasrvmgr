@@ -45,7 +45,7 @@ usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
 echo "Setting up $install_dir and subdirectories..."
-mkdir -p "$install_dir/configs" "$install_dir/logs" "$install_dir/wads"
+mkdir -p "$install_dir/configs" "$install_dir/logs" "$install_dir/wads" "$install_dir/crash-dumps"
 
 # Copy files
 echo "Copying configs, wads, banlist, and ports.env..."
@@ -63,9 +63,13 @@ find "$install_dir" -type d -exec chmod 750 {} +
 find "$install_dir" -type f -exec chmod 640 {} +
 # Except the log directory needs to be writable
 chmod 770 "$install_dir/logs"
+# As does the banlist
+chmod 660 "$install_dir/banlist.json"
+# And the crash dumps directory
+chmod 770 "$install_dir/crash-dumps"
 find "$install_dir" -type d -exec chmod g+s {} +
 
 # Enable systemd services
 echo "Enabling servers..."
 systemctl link "$script_dir/systemd-units/odasrv@.service"
-systemctl enable "$script_dir/systemd-units/odasrv.target"
+systemctl enable --now "$script_dir/systemd-units/odasrv.target"
