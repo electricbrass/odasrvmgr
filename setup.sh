@@ -22,6 +22,10 @@ banlist_src="$script_dir/banlist.json"
 ports_src="$script_dir/ports.env"
 wads_src="$script_dir/wads"
 
+# Install tmux
+apt-get update -qq
+apt-get install -y tmux
+
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
   echo "Creating user $service_user..."
