@@ -31,6 +31,62 @@ svmanager_list() {
   done < <(systemctl list-dependencies --plain --no-legend "$target" | grep 'odasrv@')
 }
 
+restartreload() {
+  local instance="$1"
+  local command="$2"
+  local service="odasrv@$instance.service"
+  if [ -z "$instance" ]; then
+    echo -e "\e[4mUsage:\e[0m $script_name $command <server instance>"
+    echo
+    echo "Run $script_name list to see currently running servers"
+    echo "Oh or also you can use all for all instances"
+    exit 1
+  fi
+
+  if [[ "$instance" == "all" ]]; then
+    sudo systemctl "$command" odasrv.target
+  elif server_exists "$service"; then
+    sudo systemctl "$command" "$service"
+  else
+    echo "Error: Server instance $instance does not exist"
+    exit 1
+  fi
+}
+
+svmanager_stop() {
+  local instance="$1"
+  local service="odasrv@$instance.service"
+  if [ -z "$instance" ]; then
+    echo -e "\e[4mUsage:\e[0m $script_name stop <server instance>"
+    echo
+    echo "Run $script_name list to see currently running servers"
+    echo "Oh or also you can use all for all instances"
+    exit 1
+  fi
+
+  if [[ "$instance" == "all" ]]; then
+    sudo systemctl stop odasrv@*.service
+    sudo systemctl stop odasrv.target
+  elif server_exists "$service"; then
+    sudo systemctl stop "$service"
+  else
+    echo "Error: Server instance $instance does not exist"
+    exit 1
+  fi
+}
+
+svmanager_start() {
+  restartreload "$1" start
+}
+
+svmanager_restart() {
+  restartreload "$1" restart
+}
+
+svmanager_reload() {
+  restartreload "$1" reload
+}
+
 svmanager_console() {
   if ! command -v tmux &>/dev/null; then
     echo "tmux must be installed to use this feature."
@@ -40,7 +96,7 @@ svmanager_console() {
   if [ -z "$instance" ]; then
     echo -e "\e[4mUsage:\e[0m $script_name console <server instance>"
     echo
-    echo "Run $0 list to see currently running servers"
+    echo "Run $script_name list to see currently running servers"
     exit 1
   fi
 
@@ -122,8 +178,9 @@ svmanager_update() {
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
 
+  sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then
-    sudo systemctl daemon-reload
+    sudo systemctl stop odasrv@*.service
     sudo systemctl stop odasrv.target
     sudo systemctl start odasrv.target
   fi

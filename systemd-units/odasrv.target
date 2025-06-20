@@ -1,8 +1,8 @@
 [Unit]
 Description=Group target for odamex server instances
-Requires=odasrv@friends.service
-#Requires=odasrv@coop.service
-#Requires=odasrv@horde.service
+Wants=odasrv@friends.service
+#Wants=odasrv@coop.service
+#Wants=odasrv@horde.service
 
 [Install]
 WantedBy=multi-user.target

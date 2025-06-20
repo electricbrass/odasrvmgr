@@ -1,6 +1,6 @@
 [Unit]
 Description=Odamex server running the base-%i.cfg config
-PartOf=odasrv.target
+ReloadPropagatedFrom=odasrv.target
 
 [Service]
 User=odasrv
