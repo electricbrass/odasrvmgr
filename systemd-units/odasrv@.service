@@ -17,6 +17,6 @@ ExecReload=/bin/bash -c "echo 'exec /opt/odasrv/configs/base/base-%i.cfg' >> /op
 Restart=always
 
 # security hardening
-NoNewPrivilegs=yes
+NoNewPrivileges=yes
 MemoryDenyWriteExecute=yes
 # would love to do things like protecthome and protectsystem but it looks like odasrv needs a home directory
