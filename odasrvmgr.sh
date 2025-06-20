@@ -1,28 +1,41 @@
 #!/bin/bash
 
+server_exists() {
+  local target="odasrv.target"
+  local service="$1"
+
+  while read -r dep; do
+    if [[ "$dep" == "$service" ]]; then
+      return 0
+    fi
+  done < <(systemctl list-dependencies --plain --no-legend "$target" | grep 'odasrv@')
+
+  return 1
+}
+
 svmanager_list() {
   local target="odasrv.target"
 
   printf "%-15s %-10s\n" "Servers" "Status"
   printf "%-15s %-10s\n" "-------" "------"
 
-  # List all dependencies of the target (recursive = false to get direct deps)
-  local deps
-  mapfile -t deps < <(systemctl list-dependencies --plain --no-legend "$target" | grep 'odasrv@' | xargs)
-
-  for svc in "${deps[@]}"; do
-    if systemctl is-active --quiet "$svc"; then
+  while read -r dep; do
+    if systemctl is-active --quiet "$dep"; then
       local status="running"
     else
       local status="stopped"
     fi
-    local instance="${svc#*@}"
+    local instance="${dep#*@}"
     instance="${instance%.service}"
     printf "%-15s %-10s\n" "$instance" "$status"
-  done
+  done < <(systemctl list-dependencies --plain --no-legend "$target" | grep 'odasrv@')
 }
 
 svmanager_console() {
+  if ! command -v tmux &>/dev/null; then
+    echo "tmux must be installed to use this feature."
+  fi
+
   local instance="$1"
   if [ -z "$instance" ]; then
     echo -e "\e[4mUsage:\e[0m $script_name console <server instance>"
@@ -36,6 +49,11 @@ svmanager_console() {
   local tmux_session="odasrv-$instance"
   local systemd_service="odasrv@$instance.service"
 
+  if ! server_exists "$systemd_service"; then
+    echo "Error: Server instance $instance does not exist"
+    exit 1
+  fi
+
   if ! systemctl is-active --quiet "$systemd_service"; then
     echo "Error: Cannot attach to stopped server instance $instance"
     exit 1
@@ -46,7 +64,7 @@ svmanager_console() {
   else
     tmux new-session -s "$tmux_session" \; \
       split-window -vb \; \
-      send-keys "tail -f /opt/odasrv/logs/${1}.log" C-m \; \
+      send-keys "tail -f /opt/odasrv/logs/${1}.log -n 100" C-m \; \
       select-pane -D \; \
       send-keys "while true; do read -e -p '> ' cmd && echo \"\$cmd\" >> /opt/odasrv/con/${1}; done" C-m \; \
       resize-pane -D -y 1
@@ -59,6 +77,53 @@ svmanager_update() {
   else
     echo "Repo path file missing!" >&2
     exit 1
+  fi
+
+  local doomtools_dir="$repo_dir/DoomTools"
+  local downloads_dir="$repo_dir/downloads"
+
+  local skip_pattern='^\[Skipping\] File found in target directory: (.+)$'
+  local skipped=()
+  while read -r line; do
+    if [[ "$line" =~ $skip_pattern ]]; then
+      skipped+=("${BASH_REMATCH[1]}")
+    fi
+    echo "$line"
+  done < <("$doomtools_dir/doomfetch" --target "$downloads_dir" --lockfile "$repo_dir/doomfetch.lock")
+
+  for zipfile in "$downloads_dir"/*.zip; do
+    local base="$(basename "${zipfile%.zip}")"
+    if [[ " ${skipped[*]} " =~ " $base " ]]; then
+      continue
+    fi
+
+    echo "Extracting $zip..."
+    unzip -j -o "$zipfile" '*.wad' -d "$repo_dir/wads/PWAD"
+  done
+
+  local install_dir="/opt/odasrv"
+  local admin_user="$USER"
+  local service_group="odasrvgroup"
+
+  sudo rsync -a --chown="$admin_user:$service_group" \
+    --update "$repo_dir/configs/" "$install_dir/configs/"
+  sudo rsync -a --chown="$admin_user:$service_group" \
+    --update "$repo_dir/wads/" "$install_dir/wads/"
+  sudo rsync -a --chown="$admin_user:$service_group" \
+    --update "$repo_dir/ports.env" "$install_dir/ports.env"
+  sudo rsync -a --chown="$admin_user:$service_group" \
+    --update "$repo_dir/banlist.json" "$install_dir/banlist.json"
+
+  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 750 {} +
+  sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 640 {} +
+
+  sudo chmod 660 "$install_dir/banlist.json"
+  sudo chmod 640 "$install_dir/ports.env"
+
+  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
+
+  if systemctl is-active --quiet odasrv.target; then
+    sudo systemctl restart odasrv.target
   fi
 
   sudo install -m 755 "$repo_dir/odasrvmgr.sh" /usr/local/bin/odasrvmgr

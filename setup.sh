@@ -37,6 +37,7 @@ rm 'doomtools.tar.gz'
 # Download wads with DoomTools
 echo "Downloading wads..."
 mkdir -p "$downloads_dir"
+"$doomtools_dir/doomtools" --update && "$doomtools_dir/doomtools" --update-cleanup && "$doomtools_dir/doomtools" --update-shell
 "$doomtools_dir/doomfetch" --target "$downloads_dir" --lockfile "$script_dir/doomfetch.lock"
 for zip_file in "$downloads_dir"/*.zip; do
   echo "Extracting $zip_file"
