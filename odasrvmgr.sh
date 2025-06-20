@@ -123,7 +123,9 @@ svmanager_update() {
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
 
   if systemctl is-active --quiet odasrv.target; then
-    sudo systemctl restart odasrv.target
+    sudo systemctl daemon-reload
+    sudo systemctl stop odasrv.target
+    sudo systemctl start odasrv.target
   fi
 
   sudo install -m 755 "$repo_dir/odasrvmgr.sh" /usr/local/bin/odasrvmgr
