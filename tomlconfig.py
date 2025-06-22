@@ -1,7 +1,8 @@
-import sys, tomllib, argparse
+import os, sys, tomllib, argparse
 
 parser = argparse.ArgumentParser()
-subparsers = parser.add_argument("instance")
+parser.add_argument("instance")
+parser.add_argument('-c', action='store_true')
 args = parser.parse_args()
 
 with open('/etc/odasrvmgr/odasrvmgr.toml', 'rb') as f:
@@ -19,10 +20,13 @@ match data:
   } if all(isinstance(p, str) for p in wadpaths):
     match servers[args.instance]:
       case {'config': str(config), 'port': int(port)}:
-        print(f'odasrvpath={odasrvpath}')
-        print(f'wadpaths={":".join(wadpaths)}')
-        print(f'config={configdir + "/" + config}')
-        print(f'port={port}')
+        if args.c:
+          print(f'{configdir + "/" + config}')
+        else:
+          print(f'odasrvpath={odasrvpath}')
+          print(f'wadpaths={":".join(wadpaths)}')
+          print(f'config={configdir + "/" + config}')
+          print(f'port={port}')
       case _:
         sys.exit(2)
   case _:

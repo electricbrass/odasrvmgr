@@ -6,7 +6,9 @@ ReloadPropagatedFrom=odasrv.target
 User=odasrv
 ExecStartPre=install -m 660 /dev/null '/opt/odasrv/con/%i'
 ExecStart=/bin/bash /opt/odasrv/odasrvargs.sh '%i'
-ExecReload=/bin/bash -c "echo 'exec /opt/odasrv/configs/base/base-%i.cfg' >> /opt/odasrv/con/%i"
+ExecReload=/bin/bash -c ' \
+  config="$(/usr/bin/python3 /opt/odasrv/tomlconfig.py -c '%i')"; \
+  echo "exec $config" >> /opt/odasrv/con/%i'
 Restart=always
 RestartSec=2
 StandardOutput=journal
