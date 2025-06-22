@@ -181,12 +181,16 @@ svmanager_update() {
   sudo install -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
   sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
+  # change this to check if any service running and restart those specifically
   sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then
     sudo systemctl stop odasrv@*.service
     sudo systemctl stop odasrv.target
     sudo systemctl start odasrv.target
   fi
+
+  # needed for any updated rules to take effect
+  sudo systemctl restart polkit.service
 
   sudo install -m 755 "$repo_dir/odasrvmgr.sh" /usr/local/bin/odasrvmgr
   echo "Update complete."
