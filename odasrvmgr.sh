@@ -44,9 +44,9 @@ restartreload() {
   fi
 
   if [[ "$instance" == "all" ]]; then
-    sudo systemctl "$command" odasrv.target
+    systemctl "$command" odasrv.target
   elif server_exists "$service"; then
-    sudo systemctl "$command" "$service"
+    systemctl "$command" "$service"
   else
     echo "Error: Server instance $instance does not exist"
     exit 1
@@ -65,10 +65,10 @@ svmanager_stop() {
   fi
 
   if [[ "$instance" == "all" ]]; then
-    sudo systemctl stop odasrv@*.service
-    sudo systemctl stop odasrv.target
+    systemctl stop odasrv@*.service
+    systemctl stop odasrv.target
   elif server_exists "$service"; then
-    sudo systemctl stop "$service"
+    systemctl stop "$service"
   else
     echo "Error: Server instance $instance does not exist"
     exit 1
@@ -177,6 +177,9 @@ svmanager_update() {
   sudo chmod 640 "$install_dir/ports.env"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
+
+  sudo install -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
+  sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
   sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then

@@ -20,3 +20,6 @@ Restart=always
 NoNewPrivileges=yes
 MemoryDenyWriteExecute=yes
 # would love to do things like protecthome and protectsystem but it looks like odasrv needs a home directory
+
+#[Install]
+#WantedBy=odasrv.target

@@ -1,0 +1,29 @@
+_odasrvmgr_completions() {
+  local cur prev
+
+  cur=${COMP_WORDS[COMP_CWORD]}
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  case ${COMP_CWORD} in
+    1)
+      COMPREPLY=($(compgen -W "start stop reload restart console list update" -- ${cur}))
+      ;;
+    2)
+      case ${prev} in
+        stop|start|reload|restart)
+          local instances=$(systemctl list-dependencies --plain --no-legend "odasrv.target" | grep 'odasrv@' | sed 's/odasrv@\(.*\)\.service/\1/')
+          instances+=" all"
+          COMPREPLY=($(compgen -W "$instances" -- ${cur}))
+          ;;
+        console)
+          local instances=$(systemctl list-dependencies --plain --no-legend "odasrv.target" | grep 'odasrv@' | sed 's/odasrv@\(.*\)\.service/\1/')
+          COMPREPLY=($(compgen -W "$instances" -- ${cur}))
+          ;;
+      esac
+      ;;
+    *)
+      COMPREPLY=()
+      ;;
+  esac
+} &&
+  complete -F _odasrvmgr_completions odasrvmgr

@@ -25,6 +25,7 @@ banlist_src="$script_dir/banlist.json"
 ports_src="$script_dir/ports.env"
 wads_src="$script_dir/wads"
 polkit_src="$script_dir/odasrvmgr.rules"
+bash_completion_src="$script_dir/odasrvmgr-completions"
 
 # Install java and DoomTools
 echo "Installing dependencies..."
@@ -77,6 +78,7 @@ cp -r "$wads_src/"* "$install_dir/wads/"
 cp "$banlist_src" "$install_dir/"
 cp "$ports_src" "$install_dir/"
 install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
+install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."
