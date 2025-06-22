@@ -21,11 +21,11 @@ match data:
     match servers[args.instance]:
       case {'config': str(config), 'port': int(port)}:
         if args.c:
-          print(f'{configdir + "/" + config}')
+          print(f'{os.path.join(configdir, config)}')
         else:
           print(f'odasrvpath={odasrvpath}')
           print(f'wadpaths={":".join(wadpaths)}')
-          print(f'config={configdir + "/" + config}')
+          print(f'config={os.path.join(configdir, config)}')
           print(f'port={port}')
       case _:
         sys.exit(2)
