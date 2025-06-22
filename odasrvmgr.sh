@@ -158,23 +158,23 @@ svmanager_update() {
   done
 
   local install_dir="/opt/odasrv"
-  local admin_user="$USER"
-  local service_group="odasrvgroup"
+  local service_user="odasrv"
+  local service_group="odasrvmgr"
 
-  sudo rsync -a --chown="$admin_user:$service_group" \
+  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/configs/" "$install_dir/configs/"
-  sudo rsync -a --chown="$admin_user:$service_group" \
+  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/wads/" "$install_dir/wads/"
-  sudo rsync -a --chown="$admin_user:$service_group" \
+  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/ports.env" "$install_dir/ports.env"
-  sudo rsync -a --chown="$admin_user:$service_group" \
+  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/banlist.json" "$install_dir/banlist.json"
 
-  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 750 {} +
-  sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 640 {} +
+  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 570 {} +
+  sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 460 {} +
 
   sudo chmod 660 "$install_dir/banlist.json"
-  sudo chmod 640 "$install_dir/ports.env"
+  sudo chmod 460 "$install_dir/ports.env"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
 

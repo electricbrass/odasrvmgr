@@ -18,7 +18,7 @@ downloads_dir="$script_dir/downloads"
 
 admin_user="$SUDO_USER"
 service_user="odasrv"
-service_group="odasrvgroup"
+service_group="odasrvmgr"
 
 configs_src="$script_dir/configs"
 banlist_src="$script_dir/banlist.json"
@@ -63,8 +63,9 @@ else
 fi
 
 # Add users to group
-echo "Adding $service_user and $admin_user to $service_group..."
-usermod -aG "$service_group" "$service_user"
+echo "Adding $admin_user to $service_group..."
+#echo "Adding $service_user and $admin_user to $service_group..."
+#usermod -aG "$service_group" "$service_user"
 usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
@@ -82,11 +83,11 @@ install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."
-chown -R "$admin_user:$service_group" "$install_dir"
-# Make directories rwx for me, r-x for the group
-find "$install_dir" -type d -exec chmod 750 {} +
-# Make files rw- for me, r-- for the group
-find "$install_dir" -type f -exec chmod 640 {} +
+chown -R "$service_user:$service_group" "$install_dir"
+# Make directories r-x for odasrv, rwx for the group
+find "$install_dir" -type d -exec chmod 570 {} +
+# Make files r-- for odasrv, rw- for the group
+find "$install_dir" -type f -exec chmod 460 {} +
 # Except the log directory needs to be writable
 chmod 770 "$install_dir/logs"
 chmod 770 "$install_dir/con"
