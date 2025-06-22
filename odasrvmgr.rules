@@ -5,7 +5,7 @@ const reg = RegExp('^odasrv@[A-Za-z0-9_-]+\.service$');
 const allowedVerbs = ["start", "stop", "restart", "reload"];
 if (action.id === "org.freedesktop.systemd1.manage-units" &&
     (reg.test(unit) || unit === "odasrv.target") &&
-    allowedVerbs.includes(verb) &&
+    allowedVerbs.indexOf(verb) >= 0 &&
     subject.isInGroup("odasrvmgr")) {
   return polkit.Result.YES;
 }

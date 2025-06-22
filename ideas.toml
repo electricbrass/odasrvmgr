@@ -1,7 +1,0 @@
-[settings]
-odasrvpath = "/usr/local/bin/odasrv"
-wadpaths = [ "/opt/odasrv/wads/IWAD", "/opt/odasrv/wad/PWAD" ]
-waddownloaddir = "/opt/odasrv/wads/PWAD" # would need to add a fetch sort of thing
-
-[servers]
-name = { config = "config.cfg", port = 10666 }

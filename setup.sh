@@ -80,6 +80,10 @@ cp "$banlist_src" "$install_dir/"
 cp "$ports_src" "$install_dir/"
 install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
 install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
+# TODO: make sure these permissions are correct
+install -T -m 644 "$repo_dir/odasrvargs.sh" "/opt/odasrv/odasrvargs.sh"
+install -T -m 644 "$repo_dir/tomlconfig.py" "/opt/odasrv/tomlconfig.py"
+install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."

@@ -1,0 +1,13 @@
+[settings]
+odasrvpath = "/usr/local/bin/odasrv"
+configdir = "/opt/odasrv/configs"
+wadpaths = [
+  "/opt/odasrv/wads/IWAD/v1.9",
+  "/opt/odasrv/wads/IWAD/d-dii",
+  "/opt/odasrv/wads/IWAD/other",
+  "/opt/odasrv/wads/PWAD"
+]
+waddownloaddir = "/opt/odasrv/wads/PWAD" # would need to add a fetch sort of thing
+
+[servers]
+friends = { config = "base/base-friends.cfg", port = 10666 }

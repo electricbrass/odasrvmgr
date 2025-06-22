@@ -181,6 +181,12 @@ svmanager_update() {
   sudo install -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
   sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
+  # TODO: get the owners right here
+  sudo install -T -m 644 "$repo_dir/odasrvargs.sh" "/opt/odasrv/odasrvargs.sh"
+  sudo install -T -m 644 "$repo_dir/tomlconfig.py" "/opt/odasrv/tomlconfig.py"
+  # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
+  sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
+
   # change this to check if any service running and restart those specifically
   sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then

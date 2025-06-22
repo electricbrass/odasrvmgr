@@ -4,17 +4,13 @@ ReloadPropagatedFrom=odasrv.target
 
 [Service]
 User=odasrv
-Environment="DOOMWADPATH=/opt/odasrv/wads/IWAD/v1.9:/opt/odasrv/wads/IWAD/d-dii:/opt/odasrv/wads/IWAD/other:/opt/odasrv/wads/PWAD"
-EnvironmentFile=/opt/odasrv/ports.env
 ExecStartPre=install -m 660 /dev/null '/opt/odasrv/con/%i'
-ExecStart=/usr/local/bin/odasrv \
-  -port $%i_PORT \
-  -config /opt/odasrv/configs/base/base-%i.cfg \
-  +logfile /opt/odasrv/logs/%i.log \
-  -confile /opt/odasrv/con/%i \
-  -crashdir /opt/odasrv/crash-dumps
+ExecStart=/bin/bash /opt/odasrv/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c "echo 'exec /opt/odasrv/configs/base/base-%i.cfg' >> /opt/odasrv/con/%i"
 Restart=always
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
 
 # security hardening
 NoNewPrivileges=yes
