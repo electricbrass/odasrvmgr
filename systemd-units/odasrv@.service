@@ -25,10 +25,10 @@ ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ProtectKernelTunables=yes
 ProtectClock=yes
-#ProtectControlGroups=strict
+#ProtectControlGroups=strict # seems like maybe strict isnt supported by my version of systemd?
 ProtectControlGroups=yes
 RestrictSUIDSGID=yes
 SystemCallArchitectures=native
 
-#[Install]
-#WantedBy=odasrv.target
+[Install]
+WantedBy=odasrv.target

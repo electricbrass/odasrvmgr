@@ -6,7 +6,7 @@ _odasrvmgr_completions() {
 
   case ${COMP_CWORD} in
     1)
-      COMPREPLY=($(compgen -W "start stop reload restart console list update validate fetch" -- ${cur}))
+      COMPREPLY=($(compgen -W "start stop reload restart console list update new delete validate fetch" -- ${cur}))
       ;;
     2)
       case ${prev} in
@@ -15,7 +15,7 @@ _odasrvmgr_completions() {
           instances+=" all"
           COMPREPLY=($(compgen -W "$instances" -- ${cur}))
           ;;
-        console)
+        console|delete)
           local instances=$(systemctl list-dependencies --plain --no-legend "odasrv.target" | grep 'odasrv@' | sed 's/odasrv@\(.*\)\.service/\1/')
           COMPREPLY=($(compgen -W "$instances" -- ${cur}))
           ;;

@@ -39,7 +39,7 @@ restartreload() {
   local instance="$1"
   local command="$2"
   local service="odasrv@$instance.service"
-  if [ -z "$instance" ]; then
+  if [[ -z "$instance" ]]; then
     echo -e "\e[4mUsage:\e[0m $script_name $command <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
@@ -60,7 +60,7 @@ restartreload() {
 svmanager_stop() {
   local instance="$1"
   local service="odasrv@$instance.service"
-  if [ -z "$instance" ]; then
+  if [[ -z "$instance" ]]; then
     echo -e "\e[4mUsage:\e[0m $script_name stop <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
@@ -89,6 +89,42 @@ svmanager_restart() {
 
 svmanager_reload() {
   restartreload "$1" reload
+}
+
+svmanager_new() {
+  local instance="$1"
+  local service="odasrv@$instance.service"
+  if [[ -z "$instance" ]]; then
+    echo -e "\e[4mUsage:\e[0m $script_name new <server name>"
+    exit 1
+  fi
+
+  if [[ ! "$instance" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    errcho "Error: New server names must match the pattern ^[a-zA-Z0-9_-]+$"
+    exit 1
+  fi
+
+  sudo systemctl enable "$service" # maybe make this print some different output instead of the symlink stuff
+}
+
+svmanager_delete() {
+  local instance="$1"
+  local service="odasrv@$instance.service"
+  if [[ -z "$instance" ]]; then
+    echo -e "\e[4mUsage:\e[0m $script_name delete <server instance>"
+    echo
+    echo "Run $script_name list to see currently running servers"
+    echo "Oh or also you can use all for all instances"
+    exit 1
+  fi
+
+  if server_exists "$service"; then
+    systemctl stop "$service"
+    sudo systemctl disable "$service" # maybe make this print some different output instead of the symlink stuff
+  else
+    echo "Error: Server instance $instance does not exist"
+    exit 1
+  fi
 }
 
 svmanager_console() {
@@ -189,6 +225,7 @@ svmanager_update() {
   sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
   # change this to check if any service running and restart those specifically
+  # might be able to use try-restart here
   sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then
     sudo systemctl stop odasrv@*.service
@@ -234,6 +271,8 @@ else
   echo "  stop"
   echo "  reload"
   echo "  restart"
+  echo "  enable"
+  echo "  disable"
   echo "  update"
   echo "  validate"
   echo "  fetch"
