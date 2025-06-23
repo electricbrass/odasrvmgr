@@ -36,11 +36,12 @@ svmanager_list() {
 }
 
 restartreload() {
+  # TODO: make sure all properly propagates to instances if target is not actually running
   local instance="$1"
   local command="$2"
   local service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
-    echo -e "\e[4mUsage:\e[0m $script_name $command <server instance>"
+    echo -e "${text_ul}Usage:${text_normal} $script_name $command <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
     echo "Oh or also you can use all for all instances"
@@ -61,7 +62,7 @@ svmanager_stop() {
   local instance="$1"
   local service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
-    echo -e "\e[4mUsage:\e[0m $script_name stop <server instance>"
+    echo -e "${text_ul}Usage:${text_normal} $script_name stop <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
     echo "Oh or also you can use all for all instances"
@@ -92,10 +93,11 @@ svmanager_reload() {
 }
 
 svmanager_new() {
+  # add option to start a new server without enabling, temp for this session
   local instance="$1"
   local service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
-    echo -e "\e[4mUsage:\e[0m $script_name new <server name>"
+    echo -e "${text_ul}Usage:${text_normal} $script_name new <server name>"
     exit 1
   fi
 
@@ -111,7 +113,7 @@ svmanager_delete() {
   local instance="$1"
   local service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
-    echo -e "\e[4mUsage:\e[0m $script_name delete <server instance>"
+    echo -e "${text_ul}Usage:${text_normal} $script_name delete <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
     echo "Oh or also you can use all for all instances"
@@ -134,7 +136,7 @@ svmanager_console() {
 
   local instance="$1"
   if [ -z "$instance" ]; then
-    echo -e "\e[4mUsage:\e[0m $script_name console <server instance>"
+    echo -e "${text_ul}Usage:${text_normal} $script_name console <server instance>"
     echo
     echo "Run $script_name list to see currently running servers"
     exit 1
@@ -246,6 +248,10 @@ svmanager_validate() {
 
 script_name=$(basename "$0")
 required_group="odasrvmgr"
+text_red="\e[91m"
+text_green="\e[92m"
+text_ul="\e[4m"
+text_normal="\e[0m"
 
 if (( EUID == 0 )); then
   errcho "Error: Do not run this script as root."
@@ -262,20 +268,20 @@ if declare -f "svmanager_$1" >/dev/null; then
   shift
   "$func" "$@"
 else
-  echo -e "\e[4mUsage:\e[0m $script_name <COMMAND>"
+  echo -e "${text_ul}Usage:${text_normal} $script_name command"
   echo
-  echo -e "\e[4mCommands:\e[0m"
-  echo "  list"
-  echo "  console"
-  echo "  start"
-  echo "  stop"
-  echo "  reload"
-  echo "  restart"
-  echo "  enable"
-  echo "  disable"
-  echo "  update"
-  echo "  validate"
-  echo "  fetch"
-  echo "  uninstall"
+  echo -e "${text_ul}Commands:${text_normal}"
+  echo "  list            list all enabled server intances" # todo make it show any running that are not enabled
+  echo "  console         attach to a server instance console (requires tmux)"
+  echo "  start           start a server instance"
+  echo "  stop            stop a server instance"
+  echo "  reload          reload a server instance's cfg"
+  echo "  restart         restart a server instance"
+  echo "  new             create a new server instance (does not start it)"
+  echo "  delete          delete a server instance (stops it if running)"
+  echo "  update          idk what this does really"
+  echo "  validate        checks /etc/odasrvmgr/odasrvmgr.toml for errors"
+  echo "  fetch           smth about downloading wads idk"
+  echo "  uninstall       unimplemented but should remove all of odasrvmgr"
   exit 1
 fi
