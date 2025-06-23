@@ -16,6 +16,6 @@ port="${odasrvargs[port]}"
   -port "$port" \
   -config "$config" \
   -waddir "$wadpaths" \
-  -confile "/opt/odasrv/con/$instance" \
+  -confile "/run/odasrv/con/$instance" \
   +logfile "/var/log/odasrv/$instance.log" \
   -crashdir "/opt/odasrv/crash-dumps"

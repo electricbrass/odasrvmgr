@@ -104,8 +104,8 @@ svmanager_console() {
     exit 1
   fi
 
-  local input_file="/opt/odasrv/con/$instance"
-  local log_file="/opt/odasrv/logs/$instance.log"
+  local input_file="/run/odasrv/con/$instance"
+  local log_file="/var/log/odasrv/$instance.log"
   local tmux_session="odasrv-$instance"
   local systemd_service="odasrv@$instance.service"
 
@@ -124,9 +124,9 @@ svmanager_console() {
   else
     tmux new-session -s "$tmux_session" \; \
       split-window -vb \; \
-      send-keys "tail -f /var/log/odasrv/${1}.log -n 100" C-m \; \
+      send-keys "tail -f "$log_file" -n 100" C-m \; \
       select-pane -D \; \
-      send-keys "while true; do read -e -p '> ' cmd && echo \"\$cmd\" >> /opt/odasrv/con/${1}; done" C-m \; \
+      send-keys "while true; do read -e -p '> ' cmd && echo \"\$cmd\" >> "$input_file"; done" C-m \; \
       resize-pane -D -y 1
   fi
 }
