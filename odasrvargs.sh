@@ -5,7 +5,7 @@ declare -A odasrvargs
 
 while IFS="=" read -r key value; do
   odasrvargs["$key"]="$value"
-done < <(/usr/bin/python3 /opt/odasrv/tomlconfig.py $instance)
+done < <(/usr/bin/python3 /opt/odasrv/tomlconfig.py parse $instance)
 
 odasrvpath="${odasrvargs[odasrvpath]}"
 wadpaths="${odasrvargs[wadpaths]}"

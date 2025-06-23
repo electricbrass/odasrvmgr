@@ -1,33 +1,108 @@
-import os, sys, tomllib, argparse
+import sys, tomllib, argparse
+from pathlib import Path
+from jsonschema import validate, ValidationError
 
 parser = argparse.ArgumentParser()
-parser.add_argument("instance")
-parser.add_argument('-c', action='store_true')
+subcommands = parser.add_subparsers(dest='subcommand', required=True)
+parse_parser = subcommands.add_parser('parse')
+parse_parser.add_argument('instance')
+parse_parser.add_argument('-c', action='store_true')
+subcommands.add_parser('validate').add_argument('-q', action='store_true')
 args = parser.parse_args()
 
 with open('/etc/odasrvmgr/odasrvmgr.toml', 'rb') as f:
-  data = tomllib.load(f)
+  try:
+    data = tomllib.load(f)
+  except tomllib.TOMLDecodeError as e:
+    print(f"TOML parse error: {e}", file=sys.stderr)
+    sys.exit(1)
+  except Exception as e:
+    print(f"Failed to load config: {e}", file=sys.stderr)
+    sys.exit(2)
 
-match data:
-  case {
-    'settings': {
-      'odasrvpath': str(odasrvpath),
-      'configdir': str(configdir),
-      'wadpaths': list(wadpaths),
-      'waddownloaddir': str(waddownloaddir)
-    },
-    'servers': dict(servers)
-  } if all(isinstance(p, str) for p in wadpaths):
-    match servers[args.instance]:
-      case {'config': str(config), 'port': int(port)}:
+match args.subcommand:
+  case 'parse':
+    match data:
+      case {
+        'settings': {
+          'odasrvpath': str(odasrvpath),
+          'configdir': str(configdir),
+          'wadpaths': list(wadpaths),
+          'waddownloaddir': str(_)
+        },
+        'servers': {args.instance: {'config': str(config), 'port': int(port)}, **_other_servers}
+      } if all(isinstance(p, str) for p in wadpaths):
         if args.c:
-          print(f'{os.path.join(configdir, config)}')
+          print(f'{Path(configdir) / config}')
         else:
           print(f'odasrvpath={odasrvpath}')
           print(f'wadpaths={":".join(wadpaths)}')
-          print(f'config={os.path.join(configdir, config)}')
+          print(f'config={Path(configdir) / config}')
           print(f'port={port}')
       case _:
-        sys.exit(2)
-  case _:
-    sys.exit(1)
+        sys.exit(1)
+  case 'validate':
+    schema = {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": "object",
+          "properties": {
+            "odasrvpath": { "type": "string" },
+            "configdir": { "type": "string" },
+            "wadpaths": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "waddownloaddir": { "type": "string" }
+          },
+          "required": [ "odasrvpath", "configdir", "wadpaths", "waddownloaddir" ],
+          "additionalProperties": False
+        },
+        "servers": {
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z0-9_-]+$": {
+              "type": "object",
+              "properties": {
+                "config": { "type": "string" },
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                }
+              },
+              "required": [ "config", "port" ],
+              "additionalProperties": False
+            }
+          },
+          "additionalProperties": False
+        }
+      },
+      "required": [ "settings", "servers" ],
+      "additionalProperties": False
+    }
+
+    try:
+      validate(instance=data, schema=schema)
+    except ValidationError as e:
+      if not args.q:
+        print(f"Validation error: {e.message}", file=sys.stderr)
+      sys.exit(1)
+
+    errormsg = None
+
+    ports: list[int] = []
+    for server in data['servers'].values():
+      ports.append(server['port'])
+    if len(ports) != len(set(ports)):
+      errormsg = 'Duplicate ports found in odasrvmgr.toml'
+
+    if errormsg:
+      if not args.q:
+        print(errormsg, file=sys.stderr)
+      sys.exit(1)
+    else:
+      if not args.q:
+        print('No errors found in odasrvmgr.toml')
+      sys.exit(0)

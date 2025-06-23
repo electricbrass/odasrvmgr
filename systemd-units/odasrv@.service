@@ -1,5 +1,5 @@
 [Unit]
-Description=Odamex server running the base-%i.cfg config
+Description=Odamex server instance managed by odasrvmgr
 ReloadPropagatedFrom=odasrv.target
 
 [Service]
@@ -7,11 +7,11 @@ User=odasrv
 ExecStartPre=install -m 660 /dev/null '/opt/odasrv/con/%i'
 ExecStart=/bin/bash /opt/odasrv/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c ' \
-  config="$(/usr/bin/python3 /opt/odasrv/tomlconfig.py -c '%i')"; \
+  config="$(/usr/bin/python3 /opt/odasrv/tomlconfig.py -c parse '%i')"; \
   echo "exec $config" >> /opt/odasrv/con/%i'
 Restart=always
 RestartSec=2
-StandardOutput=journal
+#StandardOutput=journal
 StandardError=journal
 LogsDirectory=odasrv
 
@@ -24,8 +24,9 @@ ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ProtectKernelTunables=yes
 ProtectClock=yes
-ProtectControlGroups=strict
-RestrictSUIDGSID=yes
+#ProtectControlGroups=strict
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
 SystemCallArchitectures=native
 
 #[Install]

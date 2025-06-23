@@ -6,7 +6,7 @@ _odasrvmgr_completions() {
 
   case ${COMP_CWORD} in
     1)
-      COMPREPLY=($(compgen -W "start stop reload restart console list update" -- ${cur}))
+      COMPREPLY=($(compgen -W "start stop reload restart console list update validate fetch" -- ${cur}))
       ;;
     2)
       case ${prev} in

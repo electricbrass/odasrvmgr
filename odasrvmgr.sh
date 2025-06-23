@@ -1,5 +1,9 @@
 #!/bin/bash
 
+errcho() {
+  echo "$@" 1>&2
+}
+
 server_exists() {
   local target="odasrv.target"
   local service="$1"
@@ -199,23 +203,40 @@ svmanager_update() {
   echo "Update complete."
 }
 
+svmanager_validate() {
+  python3 /opt/odasrv/tomlconfig.py validate
+}
+
 script_name=$(basename "$0")
+required_group="odasrvmgr"
+
+if (( EUID == 0 )); then
+  errcho "Error: Do not run this script as root."
+  exit 1
+fi
+
+if ! id -Gnz | grep -qzxF "$required_group"; then
+  errcho "Error: You must be added to the $required_group group to manage odasrv instances."
+  exit 1
+fi
 
 if declare -f "svmanager_$1" >/dev/null; then
-    func="svmanager_$1"
-    shift
-    "$func" "$@"
+  func="svmanager_$1"
+  shift
+  "$func" "$@"
 else
-    echo -e "\e[4mUsage:\e[0m $script_name <COMMAND>"
-    echo
-    echo -e "\e[4mCommands:\e[0m"
-    echo "  list"
-    echo "  console"
-    echo "  start"
-    echo "  stop"
-    echo "  reload"
-    echo "  restart"
-    echo "  update"
-    echo "  uninstall"
-    exit 1
+  echo -e "\e[4mUsage:\e[0m $script_name <COMMAND>"
+  echo
+  echo -e "\e[4mCommands:\e[0m"
+  echo "  list"
+  echo "  console"
+  echo "  start"
+  echo "  stop"
+  echo "  reload"
+  echo "  restart"
+  echo "  update"
+  echo "  validate"
+  echo "  fetch"
+  echo "  uninstall"
+  exit 1
 fi
