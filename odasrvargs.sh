@@ -5,17 +5,35 @@ declare -A odasrvargs
 
 while IFS="=" read -r key value; do
   odasrvargs["$key"]="$value"
-done < <(/usr/bin/python3 /opt/odasrv/tomlconfig.py parse $instance)
+done < <(/usr/bin/python3 /opt/odasrv/bin/tomlconfig.py parse $instance)
 
 odasrvpath="${odasrvargs[odasrvpath]}"
 wadpaths="${odasrvargs[wadpaths]}"
 config="${odasrvargs[config]}"
 port="${odasrvargs[port]}"
 
+if [[ ! -r "$config" ]]; then
+  echo "Error: Config file '$config' is unable to be accessed." 1>&2
+  exit 1
+fi
+
+if [[ ! -x "$odasrvpath" ]]; then
+  echo "Error: odasrv executable '$odasrvpath' is unable to be executed." 1>&2
+  exit 1
+fi
+
+IFS=':'
+for dir in $wadpaths; do
+  if ! [[ -d $dir && -r $dir && -x $dir ]]; then
+    echo "Error: WAD directory '$dir' is unable to be accessed." 1>&2
+    exit 1
+  fi
+done
+
 "$odasrvpath" \
   -port "$port" \
   -config "$config" \
   -waddir "$wadpaths" \
   -confile "/run/odasrv/con/$instance" \
-  +logfile "/var/log/odasrv/$instance.log" \
-  -crashdir "/opt/odasrv/crash-dumps"
+  +logfile "/var/log/odasrv/logs/$instance.log" \
+  -crashdir "/var/log/odasrv/crash-dumps"

@@ -69,7 +69,7 @@ usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
 echo "Setting up $install_dir and subdirectories..."
-mkdir -p "$install_dir/configs" "$install_dir/wads" "$install_dir/crash-dumps" "$install_dir/con"
+mkdir -p "$install_dir/configs" "$install_dir/wads"
 
 # Copy files
 echo "Copying configs, wads, and banlist..."
@@ -79,9 +79,11 @@ cp "$banlist_src" "$install_dir/"
 install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
 install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
 # TODO: make sure these permissions are correct
-install -T -m 644 "$repo_dir/odasrvargs.sh" "/opt/odasrv/odasrvargs.sh"
-install -T -m 644 "$repo_dir/tomlconfig.py" "/opt/odasrv/tomlconfig.py"
-install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
+# TODO: get the owners right here
+sudo install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
+sudo install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
+# TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
+sudo install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."

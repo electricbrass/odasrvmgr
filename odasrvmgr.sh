@@ -143,7 +143,7 @@ svmanager_console() {
   fi
 
   local input_file="/run/odasrv/con/$instance"
-  local log_file="/var/log/odasrv/$instance.log"
+  local log_file="/var/log/odasrv/logs/$instance.log"
   local tmux_session="odasrv-$instance"
   local systemd_service="odasrv@$instance.service"
 
@@ -221,8 +221,8 @@ svmanager_update() {
   sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
   # TODO: get the owners right here
-  sudo install -T -m 644 "$repo_dir/odasrvargs.sh" "/opt/odasrv/odasrvargs.sh"
-  sudo install -T -m 644 "$repo_dir/tomlconfig.py" "/opt/odasrv/tomlconfig.py"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/odasrvargs.sh" "/opt/odasrv/bin/odasrvargs.sh"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/tomlconfig.py" "/opt/odasrv/bin/tomlconfig.py"
   # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
   sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
@@ -238,7 +238,10 @@ svmanager_update() {
   # needed for any updated rules to take effect
   sudo systemctl restart polkit.service
 
-  sudo install -m 755 "$repo_dir/odasrvmgr.sh" /usr/local/bin/odasrvmgr
+  sudo install -T -D -m 755 -o root -g root "$repo_dir/odasrvmgr.sh" /opt/odasrv/bin/odasrvmgr
+  if [[ ! -L /usr/local/bin/odasrvmgr ]]; then
+    sudo ln -s /opt/odasrv/bin/odasrvmgr /usr/local/bin/odasrvmgr
+  fi
   echo "Update complete."
 }
 
