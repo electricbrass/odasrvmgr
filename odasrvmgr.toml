@@ -2,6 +2,7 @@
 odasrvpath = "/usr/local/bin/odasrv" # this is TERRIBLE for security, cause the service can just run any executable then
 configdir = "/opt/odasrv/configs"
 wadpaths = [
+  "/opt/odasrv/wads/",
   "/opt/odasrv/wads/IWAD/v1.9",
   "/opt/odasrv/wads/IWAD/d-dii",
   "/opt/odasrv/wads/IWAD/other",
