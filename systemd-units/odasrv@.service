@@ -13,11 +13,20 @@ Restart=always
 RestartSec=2
 StandardOutput=journal
 StandardError=journal
+LogsDirectory=odasrv
 
 # security hardening
 NoNewPrivileges=yes
 MemoryDenyWriteExecute=yes
-# would love to do things like protecthome and protectsystem but it looks like odasrv needs a home directory
+ProtectHome=read-only
+ProtectSystem=full
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectKernelTunables=yes
+ProtectClock=yes
+ProtectControlGroups=strict
+RestrictSUIDGSID=yes
+SystemCallArchitectures=native
 
 #[Install]
 #WantedBy=odasrv.target

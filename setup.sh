@@ -22,7 +22,6 @@ service_group="odasrvmgr"
 
 configs_src="$script_dir/configs"
 banlist_src="$script_dir/banlist.json"
-ports_src="$script_dir/ports.env"
 wads_src="$script_dir/wads"
 polkit_src="$script_dir/odasrvmgr.rules"
 bash_completion_src="$script_dir/odasrvmgr-completions"
@@ -70,14 +69,13 @@ usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
 echo "Setting up $install_dir and subdirectories..."
-mkdir -p "$install_dir/configs" "$install_dir/logs" "$install_dir/wads" "$install_dir/crash-dumps" "$install_dir/con"
+mkdir -p "$install_dir/configs" "$install_dir/wads" "$install_dir/crash-dumps" "$install_dir/con"
 
 # Copy files
-echo "Copying configs, wads, banlist, and ports.env..."
+echo "Copying configs, wads, and banlist..."
 cp -r "$configs_src/"* "$install_dir/configs/"
 cp -r "$wads_src/"* "$install_dir/wads/"
 cp "$banlist_src" "$install_dir/"
-cp "$ports_src" "$install_dir/"
 install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
 install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
 # TODO: make sure these permissions are correct
@@ -93,7 +91,6 @@ find "$install_dir" -type d -exec chmod 570 {} +
 # Make files r-- for odasrv, rw- for the group
 find "$install_dir" -type f -exec chmod 460 {} +
 # Except the log directory needs to be writable
-chmod 770 "$install_dir/logs"
 chmod 770 "$install_dir/con"
 # As does the banlist
 chmod 660 "$install_dir/banlist.json"

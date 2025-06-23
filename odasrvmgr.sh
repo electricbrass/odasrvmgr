@@ -120,7 +120,7 @@ svmanager_console() {
   else
     tmux new-session -s "$tmux_session" \; \
       split-window -vb \; \
-      send-keys "tail -f /opt/odasrv/logs/${1}.log -n 100" C-m \; \
+      send-keys "tail -f /var/log/odasrv/${1}.log -n 100" C-m \; \
       select-pane -D \; \
       send-keys "while true; do read -e -p '> ' cmd && echo \"\$cmd\" >> /opt/odasrv/con/${1}; done" C-m \; \
       resize-pane -D -y 1
@@ -166,15 +166,12 @@ svmanager_update() {
   sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/wads/" "$install_dir/wads/"
   sudo rsync -a --chown="$service_user:$service_group" \
-    --update "$repo_dir/ports.env" "$install_dir/ports.env"
-  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/banlist.json" "$install_dir/banlist.json"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 570 {} +
   sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 460 {} +
 
   sudo chmod 660 "$install_dir/banlist.json"
-  sudo chmod 460 "$install_dir/ports.env"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
 
