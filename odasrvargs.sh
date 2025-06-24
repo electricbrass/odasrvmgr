@@ -36,4 +36,5 @@ done
   -waddir "$wadpaths" \
   -confile "/run/odasrv/con/$instance" \
   +logfile "/var/log/odasrv/logs/$instance.log" \
-  -crashdir "/var/log/odasrv/crash-dumps"
+  -crashdir "/var/log/odasrv/crash-dumps" \
+  +sv_banfile "/var/lib/odasrv/banlist.json"

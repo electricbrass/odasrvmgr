@@ -207,13 +207,10 @@ svmanager_update() {
     --update "$repo_dir/configs/" "$install_dir/configs/"
   sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/wads/" "$install_dir/wads/"
-  sudo rsync -a --chown="$service_user:$service_group" \
-    --update "$repo_dir/banlist.json" "$install_dir/banlist.json"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 570 {} +
   sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 460 {} +
 
-  sudo chmod 660 "$install_dir/banlist.json"
 
   sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
 
