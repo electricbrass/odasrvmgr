@@ -28,10 +28,16 @@ ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ProtectKernelTunables=yes
 ProtectClock=yes
-#ProtectControlGroups=strict # seems like maybe strict isnt supported by my version of systemd?
+#ProtectControlGroups=strict # needs systemd 257 at least
 ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectProc=noaccess
 RestrictSUIDSGID=yes
 SystemCallArchitectures=native
+PrivatePIDs=yes
+PrivateDevices=yes
+PrivateTmp=yes
+LockPersonality=yes
 
 [Install]
 WantedBy=odasrv.target
