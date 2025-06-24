@@ -48,7 +48,10 @@ done
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
   echo "Creating user $service_user..."
-  useradd --system -m --shell /usr/sbin/nologin "$service_user"
+  useradd --system -M --shell /usr/sbin/nologin "$service_user"
+  install -o "$service_user" -g "$service_user" -m 0750 -d "$install_dir/odasrvhome"
+  install -o "$service_user" -g "$service_user" -m 0755 -d "$install_dir/odasrvhome/.odamex"
+  usermod -d "$install_dir/odasrvhome" "$service_user"
 else
   echo "User $service_user already exists."
 fi

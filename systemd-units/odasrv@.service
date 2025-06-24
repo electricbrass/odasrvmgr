@@ -21,7 +21,7 @@ RuntimeDirectory=odasrv/con
 # security hardening
 NoNewPrivileges=yes
 MemoryDenyWriteExecute=yes
-ProtectHome=read-only
+ProtectHome=strict
 ProtectSystem=full
 ProtectKernelModules=yes
 ProtectKernelLogs=yes
