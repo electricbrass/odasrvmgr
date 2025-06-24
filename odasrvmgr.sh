@@ -162,9 +162,15 @@ svmanager_console() {
   else
     tmux new-session -s "$tmux_session" \; \
       split-window -vb \; \
+      send-keys "set +o history" C-m \; \
       send-keys "tail -f "$log_file" -n 100" C-m \; \
       select-pane -D \; \
-      send-keys "while true; do read -e -p '> ' cmd && echo \"\$cmd\" >> "$input_file"; done" C-m \; \
+      send-keys "trap 'tmux kill-session' SIGINT" C-m \; \
+      send-keys "unset HISTFILE" C-m \; \
+      send-keys "set -o history" C-m \; \
+      send-keys "history -c" C-m \; \
+      send-keys "while true; do read -e -p '> ' cmd || continue; history -s \"\$cmd\"; echo \"\$cmd\" >> "$input_file"; done" C-m \; \
+      send-keys C-m \; \
       resize-pane -D -y 1
   fi
 }
