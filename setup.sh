@@ -81,10 +81,10 @@ install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
 install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
 # TODO: make sure these permissions are correct
 # TODO: get the owners right here
-sudo install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
-sudo install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
+install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
+install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
 # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
-sudo install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
+install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."
