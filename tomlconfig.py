@@ -37,6 +37,7 @@ match args.subcommand:
         else:
           print(f'odasrvpath={odasrvpath}')
           print(f'wadpaths={":".join(wadpaths)}')
+          print(f'configpath={configdir}')
           print(f'config={Path(configdir) / config}')
           print(f'port={port}')
       case _:

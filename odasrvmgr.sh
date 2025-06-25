@@ -101,8 +101,13 @@ svmanager_new() {
     exit 1
   fi
 
-  if [[ ! "$instance" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-    errcho "Error: New server names must match the pattern ^[a-zA-Z0-9_-]+$"
+  if [[ ! "$instance" =~ ^[A-Za-z0-9_-]+$ ]]; then
+    errcho "Error: New server names must match the pattern ^[A-Za-z0-9_-]+$"
+    exit 1
+  fi
+
+  if server_exists "$service"; then
+    errcho "Error: Server name $instance already in use"
     exit 1
   fi
 

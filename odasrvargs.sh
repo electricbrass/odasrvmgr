@@ -9,8 +9,14 @@ done < <(/usr/bin/python3 /opt/odasrv/bin/tomlconfig.py parse $instance)
 
 odasrvpath="${odasrvargs[odasrvpath]}"
 wadpaths="${odasrvargs[wadpaths]}"
+configpath="${odasrvargs[configpath]}"
 config="${odasrvargs[config]}"
 port="${odasrvargs[port]}"
+
+if ! [[ -d $configpath && -r $configpath && -x $configpath ]]; then
+  echo "Error: Config directory '$configpath' is unable to be accessed." 1>&2
+  exit 1
+fi
 
 if [[ ! -r "$config" ]]; then
   echo "Error: Config file '$config' is unable to be accessed." 1>&2
@@ -33,6 +39,7 @@ done
 "$odasrvpath" \
   -port "$port" \
   -config "$config" \
+  -cfgdir "$configpath" \
   -waddir "$wadpaths" \
   -confile "/run/odasrv/con/$instance" \
   +logfile "/var/log/odasrv/logs/$instance.log" \
