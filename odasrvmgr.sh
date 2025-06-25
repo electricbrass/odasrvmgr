@@ -5,8 +5,8 @@ errcho() {
 }
 
 server_exists() {
-  local target="odasrv.target"
-  local service="$1"
+  local -r target="odasrv.target"
+  local -r service="$1"
 
   while read -r dep; do
     if [[ "$dep" == "$service" ]]; then
@@ -18,16 +18,16 @@ server_exists() {
 }
 
 svmanager_list() {
-  local target="odasrv.target"
+  local -r target="odasrv.target"
 
   printf "%-15s %-10s\n" "Servers" "Status"
   printf "%-15s %-10s\n" "-------" "------"
 
   while read -r dep; do
     if systemctl is-active --quiet "$dep"; then
-      local status="running"
+      local -r status="running"
     else
-      local status="stopped"
+      local -r status="stopped"
     fi
     local instance="${dep#*@}"
     instance="${instance%.service}"
@@ -37,9 +37,9 @@ svmanager_list() {
 
 restartreload() {
   # TODO: make sure all properly propagates to instances if target is not actually running
-  local instance="$1"
-  local command="$2"
-  local service="odasrv@$instance.service"
+  local -r instance="$1"
+  local -r command="$2"
+  local -r service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
     echo -e "${text_ul}Usage:${text_normal} $script_name $command <server instance>"
     echo
@@ -59,8 +59,8 @@ restartreload() {
 }
 
 svmanager_stop() {
-  local instance="$1"
-  local service="odasrv@$instance.service"
+  local -r instance="$1"
+  local -r service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
     echo -e "${text_ul}Usage:${text_normal} $script_name stop <server instance>"
     echo
@@ -94,8 +94,8 @@ svmanager_reload() {
 
 svmanager_new() {
   # add option to start a new server without enabling, temp for this session
-  local instance="$1"
-  local service="odasrv@$instance.service"
+  local -r instance="$1"
+  local -r service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
     echo -e "${text_ul}Usage:${text_normal} $script_name new <server name>"
     exit 1
@@ -115,8 +115,8 @@ svmanager_new() {
 }
 
 svmanager_delete() {
-  local instance="$1"
-  local service="odasrv@$instance.service"
+  local -r instance="$1"
+  local -r service="odasrv@$instance.service"
   if [[ -z "$instance" ]]; then
     echo -e "${text_ul}Usage:${text_normal} $script_name delete <server instance>"
     echo
@@ -139,7 +139,7 @@ svmanager_console() {
     echo "tmux must be installed to use this feature."
   fi
 
-  local instance="$1"
+  local -r instance="$1"
   if [ -z "$instance" ]; then
     echo -e "${text_ul}Usage:${text_normal} $script_name console <server instance>"
     echo
@@ -147,10 +147,10 @@ svmanager_console() {
     exit 1
   fi
 
-  local input_file="/run/odasrv/con/$instance"
-  local log_file="/var/log/odasrv/logs/$instance.log"
-  local tmux_session="odasrv-$instance"
-  local systemd_service="odasrv@$instance.service"
+  local -r input_file="/run/odasrv/con/$instance"
+  local -r log_file="/var/log/odasrv/logs/$instance.log"
+  local -r tmux_session="odasrv-$instance"
+  local -r systemd_service="odasrv@$instance.service"
 
   if ! server_exists "$systemd_service"; then
     echo "Error: Server instance $instance does not exist"
@@ -188,10 +188,10 @@ svmanager_update() {
     exit 1
   fi
 
-  local doomtools_dir="$repo_dir/DoomTools"
-  local downloads_dir="$repo_dir/downloads"
+  local -r doomtools_dir="$repo_dir/DoomTools"
+  local -r downloads_dir="$repo_dir/downloads"
 
-  local skip_pattern='^\[Skipping\] File found in target directory: (.+)$'
+  local -r skip_pattern='^\[Skipping\] File found in target directory: (.+)$'
   local skipped=()
   while read -r line; do
     if [[ "$line" =~ $skip_pattern ]]; then
@@ -210,9 +210,9 @@ svmanager_update() {
     unzip -j -o "$zipfile" '*.wad' -d "$repo_dir/wads/PWAD"
   done
 
-  local install_dir="/opt/odasrv"
-  local service_user="odasrv"
-  local service_group="odasrvmgr"
+  local -r install_dir="/opt/odasrv"
+  local -r service_user="odasrv"
+  local -r service_group="odasrvmgr"
 
   sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/configs/" "$install_dir/configs/"
@@ -257,12 +257,12 @@ svmanager_validate() {
   python3 /opt/odasrv/tomlconfig.py validate
 }
 
-script_name=$(basename "$0")
-required_group="odasrvmgr"
-text_red="\e[91m"
-text_green="\e[92m"
-text_ul="\e[4m"
-text_normal="\e[0m"
+declare -r script_name=$(basename "$0")
+declare -r required_group="odasrvmgr"
+declare -r text_red="\e[91m"
+declare -r text_green="\e[92m"
+declare -r text_ul="\e[4m"
+declare -r text_normal="\e[0m"
 
 if (( EUID == 0 )); then
   errcho "Error: Do not run this script as root."
