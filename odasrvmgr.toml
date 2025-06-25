@@ -8,7 +8,7 @@ wadpaths = [
   "/opt/odasrv/wads/IWAD/other",
   "/opt/odasrv/wads/PWAD"
 ]
-waddownloaddir = "/opt/odasrv/wads/PWAD" # would need to add a fetch sort of thing
+waddownloaddir = "/home/mia/Games/Doom/Odamex/odasrvmgr/wads/PWAD"
 
 [servers]
 friends = { config = "base/base-friends.cfg", port = 10666 }

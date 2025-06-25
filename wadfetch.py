@@ -1,5 +1,6 @@
 import os, sys, grp, argparse, tomllib, enum
 from pathlib import Path
+from hashlib import md5 # md5 because its whats odamex uses + listed on the doomwiki
 
 DOWNLOAD_SITES = [
   'https://static.allfearthesentinel.com/wads/',
@@ -64,8 +65,11 @@ def download_from_lockfile(downloaddir: Path) -> None:
   if not lockfile_path.exists():
     raise FileNotFoundError(f"Lockfile '{lockfile_path}' does not exist.")
   with open(downloaddir / 'wadfetch.lock', 'r') as f:
-    wads = f.read().splitlines()
-  pass
+    for line in f:
+      stripped = line.strip()
+      if not stripped or stripped.startswith('#'):
+        continue
+      wadname, md5 = stripped.split() # Wanna throw in more error handling here if I distribute this
 
 def main() -> int:
   try:
