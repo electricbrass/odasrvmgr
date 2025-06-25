@@ -41,6 +41,7 @@ match args.subcommand:
           print(f'config={Path(configdir) / config}')
           print(f'port={port}')
       case _:
+        print("Error reading odasrvmgr.toml. Server instance likely missing from [servers].", file=sys.stderr)
         sys.exit(1)
   case 'validate':
     schema = {

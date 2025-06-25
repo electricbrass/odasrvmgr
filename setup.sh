@@ -83,6 +83,7 @@ install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions
 # TODO: get the owners right here
 install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
 install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
+install -T -D -m 644 -o root -g root "$script_dir/wadfetch.py" "$install_dir/bin/wadfetch.py"
 # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
 install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 

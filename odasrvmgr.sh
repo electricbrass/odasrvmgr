@@ -231,6 +231,7 @@ svmanager_update() {
   # TODO: get the owners right here
   sudo install -T -D -m 644 -o root -g root "$repo_dir/odasrvargs.sh" "/opt/odasrv/bin/odasrvargs.sh"
   sudo install -T -D -m 644 -o root -g root "$repo_dir/tomlconfig.py" "/opt/odasrv/bin/tomlconfig.py"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/wadfetch.py" "/opt/odasrv/bin/wadfetch.py"
   # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
   sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
@@ -238,9 +239,9 @@ svmanager_update() {
   # might be able to use try-restart here
   sudo systemctl daemon-reload
   if systemctl is-active --quiet odasrv.target; then
-    sudo systemctl stop odasrv@*.service
-    sudo systemctl stop odasrv.target
-    sudo systemctl start odasrv.target
+    systemctl stop odasrv@*.service
+    systemctl stop odasrv.target
+    systemctl start odasrv.target
   fi
 
   # needed for any updated rules to take effect
@@ -254,7 +255,11 @@ svmanager_update() {
 }
 
 svmanager_validate() {
-  python3 /opt/odasrv/tomlconfig.py validate
+  python3 /opt/odasrv/bin/tomlconfig.py validate
+}
+
+svmanager_fetch() {
+  python3 /opt/odasrv/bin/wadfetch.py "$@"
 }
 
 declare -r script_name=$(basename "$0")

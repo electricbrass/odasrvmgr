@@ -22,8 +22,8 @@ StateDirectory=odasrv
 # security hardening
 NoNewPrivileges=yes
 MemoryDenyWriteExecute=yes
-ProtectHome=strict
-ProtectSystem=full
+ProtectHome=yes
+ProtectSystem=strict
 ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ProtectKernelTunables=yes
