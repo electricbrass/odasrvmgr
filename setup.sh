@@ -13,36 +13,13 @@ fi
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 install_dir="/opt/odasrv"
-doomtools_dir="$script_dir/DoomTools"
-downloads_dir="$script_dir/downloads"
 
 admin_user="$SUDO_USER"
 service_user="odasrv"
 service_group="odasrvmgr"
 
-configs_src="$script_dir/configs"
-wads_src="$script_dir/wads"
 polkit_src="$script_dir/odasrvmgr.rules"
 bash_completion_src="$script_dir/odasrvmgr-completions"
-
-# Install java and DoomTools
-echo "Installing dependencies..."
-apt-get update -qq
-apt-get install -y default-jre
-curl -L -o 'doomtools.tar.gz' 'https://github.com/MTrop/DoomTools/releases/download/2025.05.10-RELEASE/doomtools-bash-2025.05.10.194013274.tar.gz'
-mkdir -p "$doomtools_dir"
-tar -xzf 'doomtools.tar.gz' -C "$doomtools_dir"
-rm 'doomtools.tar.gz'
-
-# Download wads with DoomTools
-echo "Downloading wads..."
-mkdir -p "$downloads_dir"
-"$doomtools_dir/doomtools" --update && "$doomtools_dir/doomtools" --update-cleanup && "$doomtools_dir/doomtools" --update-shell
-"$doomtools_dir/doomfetch" --target "$downloads_dir" --lockfile "$script_dir/doomfetch.lock"
-for zip_file in "$downloads_dir"/*.zip; do
-  echo "Extracting $zip_file"
-  unzip -j -o "$zip_file" '*.wad' -d "$script_dir/wads/PWAD"
-done
 
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
@@ -71,14 +48,11 @@ usermod -aG "$service_group" "$admin_user"
 
 # Prepare directories
 echo "Setting up $install_dir and subdirectories..."
-mkdir -p "$install_dir/configs" "$install_dir/wads"
 
 # Copy files
-echo "Copying configs and wads..."
-cp -r "$configs_src/"* "$install_dir/configs/"
-cp -r "$wads_src/"* "$install_dir/wads/"
-install -m 644 "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
-install -T -m 644 "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
+echo "Installing files..."
+install -T -m 644  -o root -g root "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
+install -T -m 644  -o root -g root "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
 # TODO: make sure these permissions are correct
 # TODO: get the owners right here
 install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
@@ -109,4 +83,4 @@ systemctl restart polkit.service
 # Install manager script
 echo "Installing odasrvmgr..."
 echo "$script_dir" > /opt/odasrv/.repo_path
-install -m 755 "$script_dir/odasrvmgr.sh"  /usr/local/bin/odasrvmgr
+install -T -D -m 755 -o root -g odasrvmgr "$script_dir/odasrvmgr.sh"  /usr/local/bin/odasrvmgr

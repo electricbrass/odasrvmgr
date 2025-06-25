@@ -188,44 +188,20 @@ svmanager_update() {
     exit 1
   fi
 
-  local -r doomtools_dir="$repo_dir/DoomTools"
-  local -r downloads_dir="$repo_dir/downloads"
-
-  local -r skip_pattern='^\[Skipping\] File found in target directory: (.+)$'
-  local skipped=()
-  while read -r line; do
-    if [[ "$line" =~ $skip_pattern ]]; then
-      skipped+=("${BASH_REMATCH[1]}")
-    fi
-    echo "$line"
-  done < <("$doomtools_dir/doomfetch" --target "$downloads_dir" --lockfile "$repo_dir/doomfetch.lock")
-
-  for zipfile in "$downloads_dir"/*.zip; do
-    local base="$(basename "${zipfile%.zip}")"
-    if [[ " ${skipped[*]} " =~ " $base " ]]; then
-      continue
-    fi
-
-    echo "Extracting $zip..."
-    unzip -j -o "$zipfile" '*.wad' -d "$repo_dir/wads/PWAD"
-  done
-
   local -r install_dir="/opt/odasrv"
   local -r service_user="odasrv"
   local -r service_group="odasrvmgr"
 
   sudo rsync -a --chown="$service_user:$service_group" \
-    --update "$repo_dir/configs/" "$install_dir/configs/"
-  sudo rsync -a --chown="$service_user:$service_group" \
     --update "$repo_dir/wads/" "$install_dir/wads/"
 
-  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod 570 {} +
-  sudo find "$install_dir/configs" "$install_dir/wads" -type f -exec chmod 460 {} +
+  sudo find "$install_dir/wads" -type d -exec chmod 570 {} +
+  sudo find "$install_dir/wads" -type f -exec chmod 460 {} +
 
 
-  sudo find "$install_dir/configs" "$install_dir/wads" -type d -exec chmod g+s {} +
+  sudo find "$install_dir/wads" -type d -exec chmod g+s {} +
 
-  sudo install -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
+  sudo install -T -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
   sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
   # TODO: get the owners right here
