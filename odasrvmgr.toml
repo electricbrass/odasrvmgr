@@ -1,14 +1,11 @@
 [settings]
 odasrvpath = "/usr/local/bin/odasrv" # this is TERRIBLE for security, cause the service can just run any executable then
-configdir = "/opt/odasrv/configs"
+configdir = "/path/to/configs"
 wadpaths = [
-  "/opt/odasrv/wads/",
-  "/opt/odasrv/wads/IWAD/v1.9",
-  "/opt/odasrv/wads/IWAD/d-dii",
-  "/opt/odasrv/wads/IWAD/other",
-  "/opt/odasrv/wads/PWAD"
+  "/path/to/wads",
+  "/other/path/to/wads"
 ]
-waddownloaddir = "/home/mia/Games/Doom/Odamex/odasrv-wads/wads/PWAD"
+waddownloaddir = "/path/to/wads"
 
 [servers]
-friends = { config = "base/base-friends.cfg", port = 10666 }
+server1 = { config = "example.cfg", port = 10666 }
