@@ -99,7 +99,7 @@ def download_from_wad_name(downloaddir: Path, wad: str) -> WadDownloadResult:
       print(f"HTTP error: {e.code}, trying next site.")
       continue
     except (error.URLError, error.ContentTooShortError) as e:
-      print(f"Download failed: {e}, trying next site.")
+      print(f"Error: {e}, trying next site.")
       continue
   else:
     return WadDownloadResult.ERROR
@@ -144,8 +144,8 @@ def download_from_lockfile(downloaddir: Path) -> None:
           print(f"HTTP error: {e.code}, trying next site.")
           continue
         except (error.URLError, error.ContentTooShortError) as e:
-          print(f"Download failed: {e}, trying next site.")
-        continue
+          print(f"Error: {e}, trying next site.")
+          continue
 
 def main() -> int:
   try:
@@ -171,7 +171,8 @@ def main() -> int:
           return 1
   else:
     try:
-      download_from_lockfile(downloaddir)
+      with hidden_cursor():
+        download_from_lockfile(downloaddir)
     except FileNotFoundError as e:
       print(f"Error: {e}", file=sys.stderr)
       return 1
