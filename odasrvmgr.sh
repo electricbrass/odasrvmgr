@@ -202,10 +202,13 @@ svmanager_update() {
   sudo install -T -D -m 644 -o root -g root "$repo_dir/wadfetch.py" "/opt/odasrv/bin/wadfetch.py"
   sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml.sample"
 
+  sudo install -T -m 644 -o root -g root "$repo_dir/systemd-units/odasrv.target" "/etc/systemd/system/odasrv.target"
+  sudo install -T -m 644 -o root -g root "$repo_dir/systemd-units/odasrv@.service" "/etc/systemd/system/odasrv@.service"
+
   # change this to check if any service running and restart those specifically
   # might be able to use try-restart here
   sudo systemctl daemon-reload
-  if systemctl is-active --quiet odasrv.target; then
+  if systemctl is-active --quiet odasrv.target || systemctl is-active --quiet odasrv@*.service; then
     systemctl stop odasrv@*.service
     systemctl stop odasrv.target
     systemctl start odasrv.target

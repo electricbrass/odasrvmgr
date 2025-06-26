@@ -58,8 +58,10 @@ install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/oda
 
 # Enable systemd services
 echo "Enabling servers..."
-systemctl link "$script_dir/systemd-units/odasrv@.service"
-systemctl enable --now "$script_dir/systemd-units/odasrv.target"
+install -T -m 644 -o root -g root "$script_dir/systemd-units/odasrv.target" "/etc/systemd/system/odasrv.target"
+install -T -m 644 -o root -g root "$script_dir/systemd-units/odasrv@.service" "/etc/systemd/system/odasrv@.service"
+systemctl enable "odasrv.target"
+systemctl restart daemon-reload
 systemctl restart polkit.service
 
 # Install manager script
