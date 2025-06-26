@@ -21,6 +21,9 @@ service_group="odasrvmgr"
 polkit_src="$script_dir/odasrvmgr.rules"
 bash_completion_src="$script_dir/odasrvmgr-completions"
 
+echo "Creating install directory..."
+install -o root -g root -m 0755 -d "$install_dir"
+
 # Create user if missing
 if ! id -u "$service_user" >/dev/null 2>&1; then
   echo "Creating user $service_user..."
@@ -46,9 +49,6 @@ echo "Adding $admin_user to $service_group..."
 #usermod -aG "$service_group" "$service_user"
 usermod -aG "$service_group" "$admin_user"
 
-# Prepare directories
-echo "Setting up $install_dir and subdirectories..."
-
 # Copy files
 echo "Installing files..."
 install -T -m 644  -o root -g root "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
@@ -60,19 +60,6 @@ install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/b
 install -T -D -m 644 -o root -g root "$script_dir/wadfetch.py" "$install_dir/bin/wadfetch.py"
 # TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
 install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
-
-# Set ownership and permissions
-echo "Setting ownership and permissions..."
-chown -R "$service_user:$service_group" "$install_dir"
-# Make directories r-x for odasrv, rwx for the group
-find "$install_dir" -type d -exec chmod 570 {} +
-# Make files r-- for odasrv, rw- for the group
-find "$install_dir" -type f -exec chmod 460 {} +
-# Except the log directory needs to be writable
-chmod 770 "$install_dir/con"
-# And the crash dumps directory
-chmod 770 "$install_dir/crash-dumps"
-find "$install_dir" -type d -exec chmod g+s {} +
 
 # Enable systemd services
 echo "Enabling servers..."

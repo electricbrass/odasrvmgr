@@ -26,6 +26,8 @@ svmanager_list() {
   while read -r dep; do
     if systemctl is-active --quiet "$dep"; then
       local -r status="running"
+    elif systemctl is-failed --quiet "$dep"; then
+      local -r status="failed"
     else
       local -r status="stopped"
     fi
