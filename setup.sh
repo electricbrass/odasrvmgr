@@ -45,20 +45,15 @@ fi
 
 # Add users to group
 echo "Adding $admin_user to $service_group..."
-#echo "Adding $service_user and $admin_user to $service_group..."
-#usermod -aG "$service_group" "$service_user"
 usermod -aG "$service_group" "$admin_user"
 
 # Copy files
 echo "Installing files..."
 install -T -m 644  -o root -g root "$polkit_src" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
 install -T -m 644  -o root -g root "$bash_completion_src" "/usr/share/bash-completion/completions/odasrvmgr"
-# TODO: make sure these permissions are correct
-# TODO: get the owners right here
 install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
 install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
 install -T -D -m 644 -o root -g root "$script_dir/wadfetch.py" "$install_dir/bin/wadfetch.py"
-# TODO: this should instead update a .sample and only setup.sh should overwrite the actual config
 install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 
 # Enable systemd services
