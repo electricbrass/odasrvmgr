@@ -16,7 +16,7 @@ Then just clone this repo and run the setup script:
 ```bash
 git clone https://github.com/electricbrass/odasrvmgr.git
 cd odasrvmgr
-./setup.sh
+sudo ./setup.sh
 ```
 
 # Configuring `odasrvmgr.toml`
