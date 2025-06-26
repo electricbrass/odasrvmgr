@@ -61,7 +61,7 @@ echo "Enabling servers..."
 install -T -m 644 -o root -g root "$script_dir/systemd-units/odasrv.target" "/etc/systemd/system/odasrv.target"
 install -T -m 644 -o root -g root "$script_dir/systemd-units/odasrv@.service" "/etc/systemd/system/odasrv@.service"
 systemctl enable "odasrv.target"
-systemctl restart daemon-reload
+systemctl daemon-reload
 systemctl restart polkit.service
 
 # Install manager script
