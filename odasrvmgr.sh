@@ -35,13 +35,14 @@ svmanager_list() {
   printf "%-15s %-10s\n" "Servers" "Status"
   printf "%-15s %-10s\n" "-------" "------"
 
+  local status
   while read -r dep; do
     if systemctl is-active --quiet "$dep"; then
-      local -r status="running"
+      status="running"
     elif systemctl is-failed --quiet "$dep"; then
-      local -r status="failed"
+      status="failed"
     else
-      local -r status="stopped"
+      status="stopped"
     fi
     local instance="${dep#*@}"
     instance="${instance%.service}"
