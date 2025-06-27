@@ -21,7 +21,7 @@ User=odasrv
 ExecStartPre=!install -o odasrv -g odasrvmgr -m 660 /dev/null '/run/odasrv/con/%i'
 ExecStart=/bin/bash /opt/odasrv/bin/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c ' \
-  config="$(/usr/bin/python3 /opt/odasrv/bin/tomlconfig.py -c parse '%i')"; \
+  config="$(/usr/bin/python3 /opt/odasrv/bin/tomlconfig.py parse -c '%i')"; \
   echo "exec $config" >> /run/odasrv/con/%i'
 Restart=always
 RestartSec=2
