@@ -179,7 +179,8 @@ svmanager_console() {
   if tmux has-session -t "$tmux_session" 2>/dev/null; then
     tmux attach-session -t "$tmux_session"
   else
-    tmux new-session -s "$tmux_session" \; \
+    tmux -f /dev/null \; \
+      new-session -s "$tmux_session" \; \
       split-window -vb \; \
       send-keys "set +o history" C-m \; \
       send-keys "tail -f "$log_file" -n 100" C-m \; \
