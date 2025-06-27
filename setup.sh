@@ -67,7 +67,7 @@ install -T -m 644  -o root -g root "$bash_completion_src" "/usr/share/bash-compl
 install -T -D -m 644 -o root -g root "$script_dir/odasrvargs.sh" "$install_dir/bin/odasrvargs.sh"
 install -T -D -m 644 -o root -g root "$script_dir/tomlconfig.py" "$install_dir/bin/tomlconfig.py"
 install -T -D -m 644 -o root -g root "$script_dir/wadfetch.py" "$install_dir/bin/wadfetch.py"
-install -T -D -m 755 -o root -g odasrvmgr "$script_dir/odasrvmgr.sh"  "$install_dir/bin/bin/odasrvmgr"
+install -T -D -m 755 -o root -g odasrvmgr "$script_dir/odasrvmgr.sh"  "$install_dir/bin/odasrvmgr"
 if [[ ! -f "/etc/odasrvmgr/odasrvmgr.toml" ]]; then
   install -T -D -m 664 -o root -g odasrvmgr "$script_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml"
 fi
