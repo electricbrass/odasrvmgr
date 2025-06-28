@@ -246,6 +246,10 @@ svmanager_fetch() {
   python3 /opt/odasrv/bin/wadfetch.py "$@"
 }
 
+svmanager_edit() {
+  "${EDITOR:-vi}" /etc/odasrvmgr/odasrvmgr.toml
+}
+
 declare -r script_name=$(basename "$0")
 declare -r required_group="odasrvmgr"
 declare -r text_red="\e[91m"
@@ -282,6 +286,7 @@ else
   echo "  update          idk what this does really"
   echo "  validate        checks /etc/odasrvmgr/odasrvmgr.toml for errors"
   echo "  fetch           smth about downloading wads idk"
+  echo "  edit            edit the odasrvmgr config"
   echo "  uninstall       unimplemented but should remove all of odasrvmgr"
   exit 1
 fi
