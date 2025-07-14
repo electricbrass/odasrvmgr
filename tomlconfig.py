@@ -42,6 +42,28 @@ match args.subcommand:
           'wadpaths': list(wadpaths),
           'waddownloaddir': str(_)
         },
+        'servers': {args.instance: {'config': str(config), 'port': int(port), 'branch': str(branch)}, **_other_servers},
+        'branches': dict(branches)
+      } if (
+          all(isinstance(p, str) for p in wadpaths) and
+          branch in branches and
+          isinstance(branches[branch], str)
+        ):
+        if args.c:
+          print(f'{Path(configdir) / config}')
+        else:
+          print(f'odasrvpath={branches[branch]}')
+          print(f'wadpaths={":".join(wadpaths)}')
+          print(f'configpath={configdir}')
+          print(f'config={Path(configdir) / config}')
+          print(f'port={port}')
+      case {
+        'settings': {
+          'odasrvpath': str(odasrvpath),
+          'configdir': str(configdir),
+          'wadpaths': list(wadpaths),
+          'waddownloaddir': str(_)
+        },
         'servers': {args.instance: {'config': str(config), 'port': int(port)}, **_other_servers}
       } if all(isinstance(p, str) for p in wadpaths):
         if args.c:
@@ -84,13 +106,19 @@ match args.subcommand:
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 65535
-                }
+                },
+                "branch": { "type": "string" }
               },
               "required": [ "config", "port" ],
               "additionalProperties": False
             }
           },
           "additionalProperties": False
+        },
+        "branches": {
+          "patternProperties": {
+            "^[A-Za-z0-9_-]+$": { "type": "string" }
+          }
         }
       },
       "required": [ "settings", "servers" ],
