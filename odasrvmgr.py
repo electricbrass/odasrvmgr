@@ -24,7 +24,7 @@ class InstanceCmd(enum.Enum):
 
 def tail(logfile: str) -> None:
   with subprocess.Popen(
-    ["tail", "-F", f'/opt/odasrv/logs/{logfile}.log'],
+    ["tail", "-F", f'/opt/odasrvmgr/logs/{logfile}.log'],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     text=True

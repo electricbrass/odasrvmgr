@@ -25,7 +25,7 @@ if [[ -z "$SUDO_USER" ]]; then
 fi
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-install_dir="/opt/odasrv"
+install_dir="/opt/odasrvmgr"
 
 admin_user="$SUDO_USER"
 service_user="odasrv"
@@ -82,7 +82,7 @@ systemctl restart polkit.service
 
 # Install manager script
 echo "Installing odasrvmgr..."
-echo "$script_dir" > /opt/odasrv/.repo_path
+echo "$script_dir" > /opt/odasrvmgr/.repo_path
 if [[ ! -L /usr/local/bin/odasrvmgr ]]; then
-  ln -s /opt/odasrv/bin/odasrvmgr /usr/local/bin/odasrvmgr
+  ln -s /opt/odasrvmgr/bin/odasrvmgr /usr/local/bin/odasrvmgr
 fi

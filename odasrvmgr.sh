@@ -197,23 +197,23 @@ svmanager_console() {
 }
 
 svmanager_update() {
-  if [[ -f /opt/odasrv/.repo_path ]]; then
-    local repo_dir=$(< /opt/odasrv/.repo_path)
+  if [[ -f /opt/odasrvmgr/.repo_path ]]; then
+    local repo_dir=$(< /opt/odasrvmgr/.repo_path)
   else
     echo "Repo path file missing!" >&2
     exit 1
   fi
 
-  local -r install_dir="/opt/odasrv"
+  local -r install_dir="/opt/odasrvmgr"
   local -r service_user="odasrv"
   local -r service_group="odasrvmgr"
 
   sudo install -T -m 644 "$repo_dir/odasrvmgr.rules" "/usr/share/polkit-1/rules.d/50-odasrvmgr.rules"
   sudo install -T -m 644 "$repo_dir/odasrvmgr-completions" "/usr/share/bash-completion/completions/odasrvmgr"
 
-  sudo install -T -D -m 644 -o root -g root "$repo_dir/odasrvargs.sh" "/opt/odasrv/bin/odasrvargs.sh"
-  sudo install -T -D -m 644 -o root -g root "$repo_dir/tomlconfig.py" "/opt/odasrv/bin/tomlconfig.py"
-  sudo install -T -D -m 644 -o root -g root "$repo_dir/wadfetch.py" "/opt/odasrv/bin/wadfetch.py"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/odasrvargs.sh" "/opt/odasrvmgr/bin/odasrvargs.sh"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/tomlconfig.py" "/opt/odasrvmgr/bin/tomlconfig.py"
+  sudo install -T -D -m 644 -o root -g root "$repo_dir/wadfetch.py" "/opt/odasrvmgr/bin/wadfetch.py"
   sudo install -T -D -m 664 -o root -g odasrvmgr "$repo_dir/odasrvmgr.toml" "/etc/odasrvmgr/odasrvmgr.toml.sample"
 
   sudo install -T -m 644 -o root -g root "$repo_dir/systemd-units/odasrv.target" "/etc/systemd/system/odasrv.target"
@@ -231,19 +231,19 @@ svmanager_update() {
   # needed for any updated rules to take effect
   sudo systemctl restart polkit.service
 
-  sudo install -T -D -m 755 -o root -g root "$repo_dir/odasrvmgr.sh" /opt/odasrv/bin/odasrvmgr
+  sudo install -T -D -m 755 -o root -g root "$repo_dir/odasrvmgr.sh" /opt/odasrvmgr/bin/odasrvmgr
   if [[ ! -L /usr/local/bin/odasrvmgr ]]; then
-    sudo ln -s /opt/odasrv/bin/odasrvmgr /usr/local/bin/odasrvmgr
+    sudo ln -s /opt/odasrvmgr/bin/odasrvmgr /usr/local/bin/odasrvmgr
   fi
   echo "Update complete."
 }
 
 svmanager_validate() {
-  python3 /opt/odasrv/bin/tomlconfig.py validate
+  python3 /opt/odasrvmgr/bin/tomlconfig.py validate
 }
 
 svmanager_fetch() {
-  python3 /opt/odasrv/bin/wadfetch.py "$@"
+  python3 /opt/odasrvmgr/bin/wadfetch.py "$@"
 }
 
 svmanager_edit() {
