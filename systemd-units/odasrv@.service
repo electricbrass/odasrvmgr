@@ -19,19 +19,19 @@ StartLimitBurst=4
 [Service]
 User=odasrv
 ExecStartPre=!/bin/bash -c ' \
-  confile=/run/odasrv/con/%i; \
+  confile=/run/odasrv/%i/confile; \
   mkfifo -m 660 "$confile"; \
   chown odasrv:odasrvmgr "$confile"'
 ExecStart=/bin/bash /opt/odasrvmgr/bin/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c ' \
   config="$(/usr/bin/python3 /opt/odasrvmgr/bin/tomlconfig.py parse -c '%i')"; \
-  printf "exec %s\n" "$config" > /run/odasrv/con/%i'
+  printf "exec %s\n" "$config" > /run/odasrv/%i/confile'
 Restart=always
 RestartSec=2
 #StandardOutput=journal
 StandardError=journal
 LogsDirectory=odasrv/logs odasrv/crash-dumps
-RuntimeDirectory=odasrv/con
+RuntimeDirectory=odasrv/%i
 StateDirectory=odasrv
 
 # security hardening

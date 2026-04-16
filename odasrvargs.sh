@@ -53,7 +53,7 @@ done
   -config "$config" \
   -cfgdir "$configpath" \
   -waddir "$wadpaths" \
-  -confile "/run/odasrv/con/$instance" \
+  -confile "/run/odasrv/$instance/confile" \
   +logfile "/var/log/odasrv/logs/$instance.log" \
   -crashdir "/var/log/odasrv/crash-dumps" \
   +sv_banfile "/var/lib/odasrv/banlist.json"

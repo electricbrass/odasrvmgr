@@ -162,7 +162,7 @@ svmanager_console() {
     exit 1
   fi
 
-  local -r input_file="/run/odasrv/con/$instance"
+  local -r input_file="/run/odasrv/$instance/confile"
   local -r log_file="/var/log/odasrv/logs/$instance.log"
   local -r tmux_session="odasrv-$instance"
   local -r systemd_service="odasrv@$instance.service"
