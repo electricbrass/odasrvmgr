@@ -18,11 +18,14 @@ StartLimitBurst=4
 
 [Service]
 User=odasrv
-ExecStartPre=!install -o odasrv -g odasrvmgr -m 660 /dev/null '/run/odasrv/con/%i'
+ExecStartPre=!/bin/bash -c ' \
+  confile=/run/odasrv/con/%i; \
+  mkfifo -m 660 "$confile"; \
+  chown odasrv:odasrvmgr "$confile"'
 ExecStart=/bin/bash /opt/odasrvmgr/bin/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c ' \
   config="$(/usr/bin/python3 /opt/odasrvmgr/bin/tomlconfig.py parse -c '%i')"; \
-  echo "exec $config" >> /run/odasrv/con/%i'
+  printf "exec %s\n" "$config" > /run/odasrv/con/%i'
 Restart=always
 RestartSec=2
 #StandardOutput=journal

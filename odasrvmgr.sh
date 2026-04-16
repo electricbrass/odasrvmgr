@@ -190,7 +190,7 @@ svmanager_console() {
       send-keys "unset HISTFILE" C-m \; \
       send-keys "set -o history" C-m \; \
       send-keys "history -c" C-m \; \
-      send-keys "while true; do read -e -p '> ' cmd || continue; history -s \"\$cmd\"; echo \"\$cmd\" >> "$input_file"; done" C-m \; \
+      send-keys "while true; do read -e -p '> ' cmd || continue; history -s \"\$cmd\"; echo \"\$cmd\" > "$input_file"; done" C-m \; \
       send-keys C-m \; \
       resize-pane -D -y 1
   fi
