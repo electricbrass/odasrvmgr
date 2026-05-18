@@ -15,6 +15,7 @@ Description=Odamex server instance managed by odasrvmgr
 ReloadPropagatedFrom=odasrv.target
 StartLimitIntervalSec=10
 StartLimitBurst=4
+After=network.target
 
 [Service]
 User=odasrv
