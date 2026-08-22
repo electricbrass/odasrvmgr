@@ -26,7 +26,7 @@ ExecStartPre=!/bin/bash -c ' \
 ExecStart=/bin/bash /opt/odasrvmgr/bin/odasrvargs.sh '%i'
 ExecReload=/bin/bash -c ' \
   config="$(/usr/bin/python3 /opt/odasrvmgr/bin/tomlconfig.py parse -c '%i')"; \
-  printf "exec %s\n" "$config" > /run/odasrv/%i/confile'
+  printf "exec %%s\n" "$config" > /run/odasrv/%i/confile'
 Restart=always
 RestartSec=2
 #StandardOutput=journal
